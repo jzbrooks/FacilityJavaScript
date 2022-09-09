@@ -97,6 +97,7 @@ service ExampleApi
 	method editWidget
 	{
 		/// The widget ID.
+		[required]
 		id: string;
 
 		/// The operations.

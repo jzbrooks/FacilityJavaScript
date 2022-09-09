@@ -4,7 +4,7 @@
 import * as bodyParser from 'body-parser';
 import * as express from 'express';
 import { IServiceResult } from 'facility-core';
-import { IExampleApi, IGetWidgetsRequest, IGetWidgetsResponse, ICreateWidgetRequest, ICreateWidgetResponse, IGetWidgetRequest, IGetWidgetResponse, IDeleteWidgetRequest, IDeleteWidgetResponse, IEditWidgetRequest, IEditWidgetResponse, IGetWidgetBatchRequest, IGetWidgetBatchResponse, IGetWidgetWeightRequest, IGetWidgetWeightResponse, IGetPreferenceRequest, IGetPreferenceResponse, ISetPreferenceRequest, ISetPreferenceResponse, IGetInfoRequest, IGetInfoResponse, INotRestfulRequest, INotRestfulResponse, IKitchenRequest, IKitchenResponse, IWidget, IWidgetJob, IPreference, IObsoleteData, IKitchenSink, WidgetField, ObsoleteEnum } from './exampleApiTypes';
+import { IExampleApi, IGetWidgetsRequest, IGetWidgetsResponse, ICreateWidgetRequest, ICreateWidgetResponse, IGetWidgetRequest, IGetWidgetResponse, IDeleteWidgetRequest, IDeleteWidgetResponse, IEditWidgetRequest, validateEditWidgetRequest, IEditWidgetResponse, IGetWidgetBatchRequest, IGetWidgetBatchResponse, IGetWidgetWeightRequest, IGetWidgetWeightResponse, IGetPreferenceRequest, IGetPreferenceResponse, ISetPreferenceRequest, ISetPreferenceResponse, IGetInfoRequest, IGetInfoResponse, INotRestfulRequest, INotRestfulResponse, IKitchenRequest, IKitchenResponse, IWidget, IWidgetJob, IPreference, IObsoleteData, IKitchenSink, WidgetField, ObsoleteEnum } from './exampleApiTypes';
 export * from './exampleApiTypes';
 
 const standardErrorCodes: { [code: string]: number } = {
@@ -168,6 +168,10 @@ export function createApp(service: IExampleApi): express.Application {
 		request.id = req.params.id;
 		request.ops = req.body.ops;
 		request.weight = req.body.weight;
+
+		if (!validateEditWidgetRequest(request)) {
+			return 400
+		}
 
 		return service.editWidget(request)
 			.then(result => {

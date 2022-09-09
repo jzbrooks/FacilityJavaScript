@@ -143,6 +143,10 @@ export interface IEditWidgetRequest {
 	weight?: number;
 }
 
+export function validateEditWidgetRequest(dto: IEditWidgetRequest): boolean {
+	return dto.id !== undefined;
+}
+
 /** Response for EditWidget. */
 export interface IEditWidgetResponse {
 	/** The edited widget. */

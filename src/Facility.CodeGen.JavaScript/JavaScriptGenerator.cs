@@ -551,6 +551,29 @@ namespace Facility.CodeGen.JavaScript
 					code.WriteLine($"{fieldInfo.Name}?: {RenderFieldType(service.GetFieldType(fieldInfo)!)};");
 				}
 			}
+
+			WriteValidationFunction(code, dtoInfo);
+		}
+
+		private static void WriteValidationFunction(CodeWriter code, ServiceDtoInfo dtoInfo)
+		{
+			var requiredFields = dtoInfo.Fields.Where(field => field.IsRequired).ToList();
+			if (requiredFields.Count > 0)
+			{
+				code.WriteLine();
+				var capitalizedName = CodeGenUtility.Capitalize(dtoInfo.Name);
+				using (code.Block($"export function validate{capitalizedName}(dto: I{capitalizedName}): boolean {{", "}"))
+				{
+					code.Write("return ");
+					code.Write($"dto.{requiredFields.First().Name} !== undefined");
+					foreach (var field in requiredFields.Skip(1))
+					{
+						code.WriteLine(" &&");
+						code.Write($"dto.{field.Name} !== undefined");
+					}
+					code.WriteLine(";");
+				}
+			}
 		}
 
 		private string IfTypeScript(string value) => TypeScript ? value : "";
